@@ -1,0 +1,19 @@
+.contest-preview {
+    border: 1px solid #000000;
+    margin: 1em;
+    border-radius: 2px;
+    font-family: 'Courier New', Courier, monospace;
+
+    .category-name {
+        border-bottom: 1px solid #000000;
+        padding-left: 1px;
+        background-color: lightskyblue;
+        font-size: 10pt;
+        font-weight: bold;
+    }
+
+    .contest-name {
+        padding-left: 1px;
+        font-size: 10pt;
+    }
+}
