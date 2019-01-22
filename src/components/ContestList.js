@@ -7,14 +7,13 @@ class ContestList extends React.Component {
 
         return(
 
-            <div className = "ContestList">
+            <div className = "contest-list">
                 {
-                    this.props.contests.map((contest) => (
+                    Object.keys(this.props.contests).map((contestId) => (
                         <ContestPreview
-                        key = {contest.id}
-                        contestId = {contest.id}
-                        categoryName = {contest.categoryName}
-                        contestName = {contest.contestName}
+                        key = {contestId}
+                        contestId = {contestId}
+                        {...this.props.contests[contestId]}
                         onClick = {this.props.onContestClick}  />
                     ))
                 }

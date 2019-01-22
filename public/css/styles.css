@@ -12,3 +12,6 @@
   .contest-preview .contest-name {
     padding-left: 1px;
     font-size: 10pt; }
+
+.contest-list {
+  cursor: pointer; }

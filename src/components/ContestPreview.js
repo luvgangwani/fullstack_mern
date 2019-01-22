@@ -8,7 +8,6 @@ class ContestPreview extends React.Component {
     }
 
     handleClick() {
-        console.log(this.props.contestId)
         this.props.onClick(this.props.contestId)
     }
 
