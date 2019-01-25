@@ -24,8 +24,8 @@ app.use("/api", apiRouter);
 
 app.set("view engine", "ejs");
 
-app.get("/", function(request, response){
-    serverRender()
+app.get(['/','/contests/:contestId'], function(request, response){
+    serverRender(request.params.contestId)
     .then(({ initialMarkup, initialData }) => {
         response.render("index", {
             title: "Home Page",

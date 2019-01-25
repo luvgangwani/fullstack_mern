@@ -5,6 +5,6 @@ import App from './components/App';
 
 // Takes over any ejs content and replaces it with the content in jsx
 ReactDOM.hydrate(
-    <App initialContests = {window.initialData.contests}/>,
+    <App initialData = {window.initialData}/>,
     document.getElementById('root')
 );

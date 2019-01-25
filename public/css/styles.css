@@ -15,3 +15,6 @@
 
 .contest-list {
   cursor: pointer; }
+
+.contest .home-link {
+  color: #0000EE; }

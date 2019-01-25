@@ -9,6 +9,10 @@ class Contest extends React.Component {
                 {this.props.id}<br />
                 {this.props.categoryName}<br />
                 {this.props.description}
+
+                <div className="home-link contest-list" onClick = {this.props.onContestLinkClick}>
+                    Contest List
+                </div>
             </div>
         );
 

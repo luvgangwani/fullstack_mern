@@ -9,16 +9,20 @@ const pushState=  (obj, url) => (
     window.history.pushState(obj, '', url)
 ) // this is done as we are not dealing with hyperlinks but direct click events
 
+const onPopState = handler => {
+    window.onpopstate = handler;
+}
+
 class App extends React.Component {
     
     constructor(props) {
         super(props);
-        this.state = {
-            headerText: "Naming Contests",
-            contests: this.props.initialContests
-        }
+        this.state = this.props.initialData;
         this.fetchContest = this.fetchContest.bind(this);
         this.setContent = this.setContent.bind(this);
+        this.currentContest = this.currentContest.bind(this);
+        this.pageHeader = this.pageHeader.bind(this);
+        this.fetchContestList = this .fetchContestList.bind(this);
     }
 
     fetchContest(contestId){
@@ -32,29 +36,55 @@ class App extends React.Component {
         api.fetchContest(contestId)
             .then(contest => {
                 this.setState({
-                    headerText: contest.contestName,
                     currentContestId: contest.id,
                     contests: {
                         ...this.state.contests,
                         [contest.id]: contest
                     }
                 });
-                console.log(this.state.contests);
             })
+    }
+
+    fetchContestList(){
+        pushState(
+            {currentContestId: null},
+            `/`
+        )
+
+        api.fetchContestList()
+            .then(contests => {
+                this.setState({
+                    currentContestId: null,
+                    contests: contests
+                })
+            });
+    }
+
+    currentContest(){
+        return this.state.contests[this.state.currentContestId]
+    }
+
+    pageHeader(){
+        if (this.state.currentContestId){
+            return this.currentContest().contestName;
+        }
+
+        return 'Naming Contests';
     }
 
     setContent(){
         if (this.state.currentContestId){
-            return <Contest {...this.state.contests[this.state.currentContestId]} />
+            {this.pageHeader()}
+            return <Contest {...this.currentContest()} onContestLinkClick = {this.fetchContestList}/>
         }
-        
+    
         return <ContestList contests = {this.state.contests} onContestClick = {this.fetchContest} />
     }
 
     render() {
         return(
             <div className = "App">
-                <Header headerText = {this.state.headerText} />
+                <Header headerText = {this.pageHeader()} />
                 {this.setContent()}
             </div>
         );
@@ -64,18 +94,25 @@ class App extends React.Component {
         // console.log("did Mount");
         // debugger
 
-        axios.get('/api/contests')
-        .then(response => {
+        onPopState((event) => {
             this.setState({
-                contests: response.data.contests
-            });
-        })
-        .catch(error => { console.log(error) });
+                currentContestId: (event.state || {}).currentContestId
+            })
+        });
+
+        // axios.get('/api/contests')
+        // .then(response => {
+        //     this.setState({
+        //         contests: response.data.contests
+        //     });
+        // })
+        // .catch(error => { console.log(error) });
     }
 
     componentWillUnmount(){ // invoked when the component is about to be removed from the DOM
         // console.log("will Unmount");
         // debugger;
+        onPopState(null); // If this function is not invoked in componentWillUnmount() it will give an error when the DOM is cleared/changed
     }
 }
 
