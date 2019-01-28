@@ -23,6 +23,9 @@ class App extends React.Component {
         this.currentContest = this.currentContest.bind(this);
         this.pageHeader = this.pageHeader.bind(this);
         this.fetchContestList = this .fetchContestList.bind(this);
+        this.fetchNames = this.fetchNames.bind(this);
+        this.lookUpName = this.lookUpName.bind(this);
+        this.addName = this.addName.bind(this);
     }
 
     fetchContest(contestId){
@@ -36,10 +39,10 @@ class App extends React.Component {
         api.fetchContest(contestId)
             .then(contest => {
                 this.setState({
-                    currentContestId: contest.id,
+                    currentContestId: contest._id,
                     contests: {
                         ...this.state.contests,
-                        [contest.id]: contest
+                        [contest._id]: contest
                     }
                 });
             })
@@ -60,6 +63,42 @@ class App extends React.Component {
             });
     }
 
+    fetchNames(nameIds){
+        if (nameIds.length === 0){
+            return;
+        }
+        api.fetchNames(nameIds)
+            .then(names => {
+                this.setState({
+                    names
+                })
+            })
+    }
+
+    addName(newName, contestId){
+        api.addName(newName, contestId)
+            .then(response => 
+                this.setState({
+                    contests: {
+                        ...this.state.contests,
+                        [response.updatedContest._id]:response.updatedContest
+                    },
+                    names: {
+                        ...this.state.names,
+                        [response.newName._id]:response.newName
+                    }
+                })
+                )
+            .catch(error => console.log(error));
+    }
+
+    lookUpName(nameId){
+        if (!this.state.names || !this.state.names[nameId]) {
+            return "...";
+        }
+        return this.state.names[nameId].name;
+    }
+
     currentContest(){
         return this.state.contests[this.state.currentContestId]
     }
@@ -75,7 +114,12 @@ class App extends React.Component {
     setContent(){
         if (this.state.currentContestId){
             {this.pageHeader()}
-            return <Contest {...this.currentContest()} onContestLinkClick = {this.fetchContestList}/>
+            return <Contest 
+                    {...this.currentContest()}
+                    onContestLinkClick = {this.fetchContestList}
+                    fetchNames = {this.fetchNames}
+                    lookUpName = {this.lookUpName}
+                    addName = {this.addName}/>
         }
     
         return <ContestList contests = {this.state.contests} onContestClick = {this.fetchContest} />

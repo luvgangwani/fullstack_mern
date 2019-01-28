@@ -6,6 +6,8 @@ import apiRouter from './api';
 
 import serverRender from './serverRender';
 
+import bodyParser from 'body-parser';
+
 var app = express();
 
 app.use("/bundle", express.static(__dirname + "/public"));
@@ -20,6 +22,8 @@ app.use("/res-scripts", express.static(__dirname + "/node_modules/bootstrap/dist
 app.use("/jquery", express.static(__dirname + "/node_modules/jquery/dist"));
 app.use("/popper", express.static(__dirname + "/node_modules/popper.js/dist/umd"));
 
+app.use(bodyParser.json());
+
 app.use("/api", apiRouter);
 
 app.set("view engine", "ejs");
@@ -33,7 +37,10 @@ app.get(['/','/contests/:contestId'], function(request, response){
             initialData: initialData
         });
     })
-    .catch(error => console.log(error))
+    .catch(error => {
+        console.error(error);
+        response.status(404).send('Bad Request!');
+    })
 });
 
 app.get("/about", function(request, response){
